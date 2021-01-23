@@ -2,7 +2,7 @@
 if(isset($_POST['email'])) {
     $email_to = "to@domain.com";
     $email_subject = "Email subject";
-    $email_from = $_POST['ritik.raina2005@gmail.com']; // required
+    $email_from = $_POST['email']; // required
 
     function clean_string($string) {
     $bad = array("content-type","bcc:","to:","cc:","href");
