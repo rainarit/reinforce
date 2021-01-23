@@ -55,7 +55,8 @@
 						<div class="hero-copy">
 	                        <h1 class="hero-title mt-0 is-revealing">Quant Labs</h1>
 	                        <p class="hero-paragraph is-revealing">A deep reinforcement learning approach to trade stocks</p>
-							<div class="hero-form field field-grouped is-revealing" action="submit_student_form.php" method="post">
+							<div class="hero-form field field-grouped is-revealing">
+								<form action="" method="post">
 	                            <div class="control control-expanded">
 	                                <input class="input" type="email" name="email" placeholder="Your best email&hellip;">
 	                            </div>
@@ -64,7 +65,27 @@
 									<a class="button button-primary button-block" href="#">Notify Me</a>
 									-->
 									<button class="button button-primary button-block" type="submit">Notify Me</button>
-	                            </div>
+								</div>
+								</form>
+								<?php
+
+									if(isset($_POST['submit']) && isset($_POST['email']))
+									{
+
+									$to      = 'name@ourcompany.com'; //can receive notification
+
+									$subject = 'the subject';
+									$message = $_POST['email'];
+									$headers = 'From: webmaster@ourcompany.com' . "\r\n" .
+    									'Reply-To: webmaster@ourcompany.com' . "\r\n" .
+    									'X-Mailer: PHP/' . phpversion();
+
+									mail($to, $subject, $message, $headers);
+
+									echo 'Email Sent.';
+									}
+
+									?>
 	                        </div>
 						</div>
 						<div class="hero-illustration">
