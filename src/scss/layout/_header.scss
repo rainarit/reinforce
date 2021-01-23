@@ -3,20 +3,6 @@
     padding: 24px 0;
 }
 
-.header-shape {
-	position: absolute;
-}
-
-.header-shape-1 {
-	display: none;
-	top: 0;
-}
-
-.header-shape-2 {
-	top: -40px;
-	right: -53px;
-}
-
 .site-header-inner {
     position: relative; /* To display all elements above the background color */
     display: flex;
@@ -43,36 +29,4 @@
         line-height: 16px;
         padding: 8px 24px;
     }
-}
-
-@include media( '>medium' ) {
-
-	.header-shape-1 {
-		display: block;
-		left: 687px;
-	}
-
-	.header-shape-2 {
-		top: -92px;
-		left: 440px;
-		right: auto;
-
-		svg {
-			width: 220px;
-			height: 220px;
-		}
-	}
-}
-
-@include media( '>large' ) {
-
-	.header-shape-1 {
-		left: auto;
-		right: 0;
-	}
-
-	.header-shape-2 {
-		left: auto;
-		right: 38%;
-	}
 }

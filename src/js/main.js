@@ -1,4 +1,5 @@
 (function () {
+  const win = window
   const doc = document.documentElement
 
   doc.classList.remove('no-js')
@@ -9,85 +10,82 @@
     /* global ScrollReveal */
     const sr = window.sr = ScrollReveal()
 
-    sr.reveal('.feature, .testimonial', {
-      duration: 600,
-      distance: '50px',
+    sr.reveal('.hero-title, .hero-paragraph, .hero-form', {
+      duration: 1000,
+      distance: '40px',
       easing: 'cubic-bezier(0.5, -0.01, 0, 1.005)',
       origin: 'bottom',
-      interval: 100
+      interval: 150
     })
+  }
 
-    /* global anime */
-    const heroAnimation = anime.timeline({ autoplay: false })
-    const strokedElement = document.querySelector('.stroke-animation')
+  // Moving objects
+  const movingObjects = document.querySelectorAll('.is-moving-object')
 
-    strokedElement.setAttribute('stroke-dashoffset', anime.setDashoffset(strokedElement))
+  // Throttling
+  function throttle (func, milliseconds) {
+    let lastEventTimestamp = null
+    let limit = milliseconds
 
-    heroAnimation.add({
-      targets: '.stroke-animation',
-      strokeDashoffset: {
-        value: 0,
-        duration: 2000,
-        easing: 'easeInOutQuart'
-      },
-      strokeWidth: {
-        value: [0, 2],
-        duration: 2000,
-        easing: 'easeOutCubic'
-      },
-      strokeOpacity: {
-        value: [1, 0],
-        duration: 1000,
-        easing: 'easeOutCubic',
-        delay: 1000
-      },
-      fillOpacity: {
-        value: [0, 1],
-        duration: 500,
-        easing: 'easeOutCubic',
-        delay: 1300
+    return (...args) => {
+      let now = Date.now()
+
+      if (!lastEventTimestamp || now - lastEventTimestamp >= limit) {
+        lastEventTimestamp = now
+        func.apply(this, args)
       }
-    }).add({
-      targets: '.fadeup-animation',
-      offset: 1300, // Starts at 1300ms of the timeline
-      translateY: {
-        value: [100, 0],
-        duration: 1500,
-        easing: 'easeOutElastic',
-        delay: function (el, i) {
-          return i * 150
-        }
-      },
-      opacity: {
-        value: [0, 1],
-        duration: 200,
-        easing: 'linear',
-        delay: function (el, i) {
-          return i * 150
-        }
-      }
-    }).add({
-      targets: '.fadeleft-animation',
-      offset: 1300, // Starts at 1300ms of the timeline
-      translateX: {
-        value: [40, 0],
-        duration: 400,
-        easing: 'easeOutCubic',
-        delay: function (el, i) {
-          return i * 100
-        }
-      },
-      opacity: {
-        value: [0, 1],
-        duration: 200,
-        easing: 'linear',
-        delay: function (el, i) {
-          return i * 100
-        }
-      }
-    })
+    }
+  }
 
-    doc.classList.add('anime-ready')
-    heroAnimation.play()
+  // Init vars
+  let mouseX = 0
+  let mouseY = 0
+  let scrollY = 0
+  let coordinateX = 0
+  let coordinateY = 0
+  let winW = doc.clientWidth
+  let winH = doc.clientHeight
+
+  // Move Objects
+  function moveObjects (e, object) {
+    mouseX = e.pageX
+    mouseY = e.pageY
+    scrollY = win.scrollY
+    coordinateX = (winW / 2) - mouseX
+    coordinateY = (winH / 2) - (mouseY - scrollY)
+
+    for (let i = 0; i < object.length; i++) {
+      const translatingFactor = object[i].getAttribute('data-translating-factor') || 20
+      const rotatingFactor = object[i].getAttribute('data-rotating-factor') || 20
+      const perspective = object[i].getAttribute('data-perspective') || 500
+      let tranformProperty = []
+
+      if (object[i].classList.contains('is-translating')) {
+        tranformProperty.push('translate(' + coordinateX / translatingFactor + 'px, ' + coordinateY / translatingFactor + 'px)')
+      }
+
+      if (object[i].classList.contains('is-rotating')) {
+        tranformProperty.push('perspective(' + perspective + 'px) rotateY(' + -coordinateX / rotatingFactor + 'deg) rotateX(' + coordinateY / rotatingFactor + 'deg)')
+      }
+
+      if (object[i].classList.contains('is-translating') || object[i].classList.contains('is-rotating')) {
+        tranformProperty = tranformProperty.join(' ')
+
+        object[i].style.transform = tranformProperty
+        object[i].style.transition = 'transform 1s ease-out'
+        object[i].style.transformStyle = 'preserve-3d'
+        object[i].style.backfaceVisibility = 'hidden'
+      }
+    }
+  }
+
+  // Call function with throttling
+  if (movingObjects) {
+    win.addEventListener('mousemove', throttle(
+      function (e) {
+        moveObjects(e, movingObjects)
+      },
+      150
+    ))
   }
 }())
